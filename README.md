@@ -105,7 +105,6 @@ simulating-electrochemical-reactions-in-python/
   tools/
     nb_extract.py            # box-format .nb -> readable text (translation aid)
     build_notebook.py        # builds the Chapter 2 notebook with nbformat
-    AUTHORING_SPEC.md        # the contract every chapter agent follows
     _extracted_ExplicitFD.txt   # extracted reference from ExplicitFD.nb
   serm/
     __init__.py              # explicit FD solver, electrode current, Cottrell ref
@@ -219,8 +218,6 @@ Mathematica-specific.
   means every chapter's asserts held. Appendix B re-imports the package and
   re-renders the API reference, so executing it confirms the documented
   signatures and the one-example-per-module smoke tests still pass.
-
-Chapter authors: follow [`tools/AUTHORING_SPEC.md`](tools/AUTHORING_SPEC.md).
 
 ## License
 
