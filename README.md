@@ -177,26 +177,26 @@ as Appendix B. Every notebook below executes headless with **zero error
 outputs**; the "Validation" column names the in-notebook `assert`-based check
 that holds on execution.
 
-| Ch. | Title | Status | Validation method (in-notebook asserts) |
-|----:|-------|--------|------------------------------------------|
-| 01 | [Solving partial differential equations](notebooks/01_solving_pdes.ipynb) | done | sympy symbolic checks: separation-of-variables residual ≡ 0; Fourier coefficient A₁ = 4/π |
-| 02 | [Explicit finite differences](notebooks/02_explicit_finite_differences.ipynb) | done | Cottrell match (mean rel err < 5e-3); demonstrates D_M > 0.5 instability |
-| 03 | [Speed and accuracy: implicit & Crank–Nicolson](notebooks/03_speed_and_accuracy.ipynb) | done | convergence orders: backward-Euler ≈ 1, Crank–Nicolson ≈ 2 |
-| 04 | [Other numerical methods: Runge–Kutta, Volterra, SOR](notebooks/04_other_numerical_methods.ipynb) | done | RK/Volterra peak vs Randles–Sevcik constant (< 5e-3); RK2 error decreases on refinement |
-| 05 | [Potential sweep — reversible CV](notebooks/05_potential_sweep_reversible.ipynb) | done | peak current vs Randles–Sevcik (< 5e-3) |
-| 06 | [Potential sweep — quasi/non-reversible](notebooks/06_potential_sweep_nonreversible.ipynb) | done | Cottrell certification + reversible limit vs Nicholson–Shain 0.4463 |
-| 07 | [AC voltammetry](notebooks/07_ac_voltammetry.ipynb) | done | fundamental-harmonic peak ≈ 1/4 located at E⁰ |
-| 08 | [Potential steps and pulses](notebooks/08_potential_steps_and_pulses.ipynb) | done | dimensionless & physical Cottrell match (< 1e-2); first-order convergence |
-| 09 | [Chronopotentiometry](notebooks/09_chronopotentiometry.ipynb) | done | Sand product/constant; wave-shape RMSE bound |
-| 10 | [Thin layers and thin films](notebooks/10_thin_layers_and_films.ipynb) | done | thin-layer peak height, voltammogram symmetry, absence of diffusional tail |
-| 11 | [Strongly adsorbed molecules](notebooks/11_adsorbed_species.ipynb) | done | surface-wave peak ψ ≈ 1/4 at E⁰, symmetric |
-| 12 | [Monte Carlo simulations](notebooks/12_monte_carlo.ipynb) | done | MSD = 2 D t within statistical tolerance; Cottrell t^(−1/2) slope |
-| 13 | [Coupled chemical reactions](notebooks/13_coupled_chemical_reactions.ipynb) | done | no-reaction limit matches Ch. 5 to machine precision; monotone grid convergence |
-| 14 | [Rotating disk electrode voltammetry](notebooks/14_rotating_disk_electrode.ipynb) | done | Levich magnitude (< 5e-3) and Levich-plot linearity R² > 0.9999 |
-| 15 | [Finite differences with sparse arrays](notebooks/15_sparse_finite_differences.ipynb) | done | sparse solver matches dense FD to < 1e-11 |
-| 16 | [Processing experimental data](notebooks/16_processing_experimental_data.ipynb) | done | smoothing reduces RMS; Savitzky–Golay preserves peak position/height |
-| App. A | [Python for electrochemical simulation](notebooks/A_appendix_a_python_refresher.ipynb) | done | numpy-vs-list equivalence asserts throughout |
-| App. B | [The `serm` package reference (generated)](notebooks/appendix_b_serm_reference.ipynb) | done | auto-rendered signatures/docstrings + one runnable example per module |
+| Ch. | Title | Validation method (in-notebook asserts) |
+|----:|-------|------------------------------------------|
+| 01 | [Solving partial differential equations](notebooks/01_solving_pdes.ipynb) | sympy symbolic checks: separation-of-variables residual ≡ 0; Fourier coefficient A₁ = 4/π |
+| 02 | [Explicit finite differences](notebooks/02_explicit_finite_differences.ipynb) | Cottrell match (mean rel err < 5e-3); demonstrates D_M > 0.5 instability |
+| 03 | [Speed and accuracy: implicit & Crank–Nicolson](notebooks/03_speed_and_accuracy.ipynb) | convergence orders: backward-Euler ≈ 1, Crank–Nicolson ≈ 2 |
+| 04 | [Other numerical methods: Runge–Kutta, Volterra, SOR](notebooks/04_other_numerical_methods.ipynb) | RK/Volterra peak vs Randles–Sevcik constant (< 5e-3); RK2 error decreases on refinement |
+| 05 | [Potential sweep — reversible CV](notebooks/05_potential_sweep_reversible.ipynb) | peak current vs Randles–Sevcik (< 5e-3) |
+| 06 | [Potential sweep — quasi/non-reversible](notebooks/06_potential_sweep_nonreversible.ipynb) | Cottrell certification + reversible limit vs Nicholson–Shain 0.4463 |
+| 07 | [AC voltammetry](notebooks/07_ac_voltammetry.ipynb) | fundamental-harmonic peak ≈ 1/4 located at E⁰ |
+| 08 | [Potential steps and pulses](notebooks/08_potential_steps_and_pulses.ipynb) | dimensionless & physical Cottrell match (< 1e-2); first-order convergence |
+| 09 | [Chronopotentiometry](notebooks/09_chronopotentiometry.ipynb) | Sand product/constant; wave-shape RMSE bound |
+| 10 | [Thin layers and thin films](notebooks/10_thin_layers_and_films.ipynb) | thin-layer peak height, voltammogram symmetry, absence of diffusional tail |
+| 11 | [Strongly adsorbed molecules](notebooks/11_adsorbed_species.ipynb) | surface-wave peak ψ ≈ 1/4 at E⁰, symmetric |
+| 12 | [Monte Carlo simulations](notebooks/12_monte_carlo.ipynb) | MSD = 2 D t within statistical tolerance; Cottrell t^(−1/2) slope |
+| 13 | [Coupled chemical reactions](notebooks/13_coupled_chemical_reactions.ipynb) | no-reaction limit matches Ch. 5 to machine precision; monotone grid convergence |
+| 14 | [Rotating disk electrode voltammetry](notebooks/14_rotating_disk_electrode.ipynb) | Levich magnitude (< 5e-3) and Levich-plot linearity R² > 0.9999 |
+| 15 | [Finite differences with sparse arrays](notebooks/15_sparse_finite_differences.ipynb) | sparse solver matches dense FD to < 1e-11 |
+| 16 | [Processing experimental data](notebooks/16_processing_experimental_data.ipynb) | smoothing reduces RMS; Savitzky–Golay preserves peak position/height |
+| App. A | [Python for electrochemical simulation](notebooks/A_appendix_a_python_refresher.ipynb) | numpy-vs-list equivalence asserts throughout |
+| App. B | [The `serm` package reference (generated)](notebooks/appendix_b_serm_reference.ipynb) | auto-rendered signatures/docstrings + one runnable example per module |
 
 The source Appendix 1 (Mathematica stylesheet) is dropped as
 Mathematica-specific.
