@@ -25,27 +25,15 @@ just plausible.
 > results** (closed-form electrochemistry equations such as the Cottrell
 > equation), **not** by copying the book's printed numbers.
 
-## Badges
-
 ![Python 3.14](https://img.shields.io/badge/python-3.14-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
-## Status
-
-**Complete.** All 16 chapters, both appendices (A: Python refresher, B: generated
-`serm` reference), and the shared `serm` package are implemented. Every notebook
-executes fresh and headless with **zero error outputs**, and each chapter carries
-in-notebook validation `assert`s against an analytical or independently-computed
-reference (Cottrell, Randles–Sevcik, Nicholson–Shain, Sand, Levich, etc.) that
-pass on execution. See the [table of contents](#table-of-contents-python-native)
-for per-chapter validation methods.
+All 16 chapters and both appendices are complete and self-validating: every
+notebook runs end-to-end and checks itself against a closed-form or
+independently-computed result. Jump in via the
+[table of contents](#table-of-contents).
 
 ## Installation
-
-This repository was developed against **Python 3.14** with a project-local
-virtual environment (the host's system Python is externally managed / PEP 668).
-The `.venv/` directory is gitignored and fully rebuildable from
-`requirements.txt`.
 
 ```bash
 git clone https://github.com/NGeorgescu/simulating-electrochemical-reactions-in-python.git
@@ -55,45 +43,23 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 ```
 
-Dependencies (see `requirements.txt`): numpy, scipy, matplotlib, sympy,
-nbformat, jupyterlab, nbclient, ipykernel.
-
 ## Usage
 
-Open the notebook suite interactively in JupyterLab:
+Launch JupyterLab and open any chapter:
 
 ```bash
 .venv/bin/jupyter lab
 ```
 
-To register the kernel the notebooks reference (display name
-"Python 3 (serm venv)") for interactive use:
-
-```bash
-.venv/bin/python -m ipykernel install --user --name serm-venv \
-    --display-name "Python 3 (serm venv)"
-```
-
-To sanity-check that the `serm` package imports (run from the project root):
-
-```bash
-.venv/bin/python -c "import serm, serm.tridiagonal, serm.filters, serm.grids, \
-    serm.plotting, serm.waveforms, serm.echem"
-```
-
-To execute every notebook end-to-end (headless). Running them through the
-**venv's** `jupyter` is what binds the notebooks' declared kernel name to this
-interpreter:
+To run every notebook end-to-end (headless):
 
 ```bash
 for nb in notebooks/*.ipynb; do
-  .venv/bin/jupyter nbconvert --to notebook --execute --inplace \
-      --ExecutePreprocessor.timeout=900 "$nb"
+  .venv/bin/jupyter nbconvert --to notebook --execute --inplace "$nb"
 done
 ```
 
-A clean run with no `CellExecutionError` means every chapter's `assert`-based
-validation held.
+A clean run means every chapter's validation `assert`s held.
 
 ## What's inside
 
@@ -125,15 +91,6 @@ simulating-electrochemical-reactions-in-python/
     validate_explicit.py     # standalone Cottrell-comparison script
 ```
 
-The top-level `serm` package re-exports the explicit FD solver plus the
-`tridiagonal`, `filters`, `grids`, `plotting`, `waveforms`, and `echem`
-submodules. Note there are two distinct `cottrell_current` functions: the
-top-level `serm.cottrell_current(n)` is the *dimensionless* reference from the
-Chapter 2 pilot, while `serm.echem.cottrell_current(t, n, A, D, c_bulk)` is the
-*dimensional* form. `import serm` resolves when the project root is on
-`sys.path`; the notebooks do this with `sys.path.insert(0, "..")` near the top of
-each notebook (the package is not pip-installed).
-
 ### Ported Mathematica sources
 
 - `serm/tridiagonal.py` — port of `Electrochem/Tridiagonal.m` (Honeychurch,
@@ -146,35 +103,13 @@ each notebook (the package is not pip-installed).
 - `serm/grids.py` and the solver in `serm/__init__.py` — ported from the code
   cells of `Extra Notebooks/chapter2/ExplicitFD.nb`.
 
-## The pilot in brief (Chapter 2)
+## Table of contents
 
-The notebook derives and implements the **explicit forward-difference** solution
-of Fick's second law for a potential step into the diffusion-limited regime of
-`O + e- <-> R`. Key points, all reproduced from `ExplicitFD.nb`:
-
-- Dimensionless model diffusion coefficient `D_M = dt/dx^2`, with grid sizing
-  `m = 1 + ceil(6*sqrt(D_M*(n-1)))`.
-- Explicit update
-  `c[j,k] = D_M*c[j-1,k-1] + (1-2*D_M)*c[j,k-1] + D_M*c[j+1,k-1]`.
-- **Stability limit `D_M <= 0.5`** (the notebook demonstrates the blow-up at
-  `D_M = 0.52`).
-- **Validation against the Cottrell equation** `i = 1/sqrt(pi*tau)`: the
-  simulated diffusion-limited current matches the analytical response to a mean
-  relative error of about `9e-4` (~0.09 %) at `n = 2000`, converging as the grid
-  is refined.
-
-The `tools/nb_extract.py` helper turns the book's box-format Mathematica 5.2
-notebooks into readable text so the original code can be studied without a
-Wolfram kernel (none is installed here).
-
-## Table of contents (Python-native)
-
-The book is re-organised into a Python-native sequence. The Mathematica
-introduction (source Chapter 0) is replaced by a Python primer, and the
-Mathematica stylesheet appendix is dropped; a generated `serm` reference is added
-as Appendix B. Every notebook below executes headless with **zero error
-outputs**; the "Validation" column names the in-notebook `assert`-based check
-that holds on execution.
+The book is re-organised into a Python-native sequence: the original Mathematica
+introduction becomes a Python primer (Appendix A), and a generated `serm`
+reference is added as Appendix B. Each chapter validates itself against a
+closed-form or independently-computed result; the right-hand column names that
+check.
 
 | Ch. | Title | Validation method (in-notebook asserts) |
 |----:|-------|------------------------------------------|
@@ -196,28 +131,6 @@ that holds on execution.
 | 16 | [Processing experimental data](notebooks/16_processing_experimental_data.ipynb) | smoothing reduces RMS; Savitzky–Golay preserves peak position/height |
 | App. A | [Python for electrochemical simulation](notebooks/A_appendix_a_python_refresher.ipynb) | numpy-vs-list equivalence asserts throughout |
 | App. B | [The `serm` package reference (generated)](notebooks/appendix_b_serm_reference.ipynb) | auto-rendered signatures/docstrings + one runnable example per module |
-
-The source Appendix 1 (Mathematica stylesheet) is dropped as
-Mathematica-specific.
-
-## How this was built and how to validate
-
-- **Source of truth.** The book's Mathematica 5.2 notebooks (box format,
-  `BoxData[RowBox[...]]`) are the reference for the physics and algorithms. No
-  Wolfram kernel is used; `tools/nb_extract.py` recovers the original Wolfram
-  code as readable text, which is then **re-implemented** in idiomatic
-  numpy/scipy/matplotlib (sympy only for genuine symbolic derivation). Cached
-  Mathematica graphics are ignored and all plots are regenerated in matplotlib.
-- **Independent validation, not number-copying.** Each chapter validates against
-  an analytical result or an independently-computed quantity via `assert`s that
-  run as part of the notebook (Cottrell, Randles–Sevcik, Nicholson–Shain, Sand,
-  Levich, Koutecký–Levich, surface-wave theory, convergence-order studies, and
-  cross-chapter limit checks). Honeychurch's printed numbers are **not** assumed.
-- **How to re-validate everything.** Run the headless execution loop in
-  [Usage](#usage); a clean run with no `CellExecutionError`
-  means every chapter's asserts held. Appendix B re-imports the package and
-  re-renders the API reference, so executing it confirms the documented
-  signatures and the one-example-per-module smoke tests still pass.
 
 ## License
 
