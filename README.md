@@ -25,14 +25,6 @@ just plausible.
 > results** (closed-form electrochemistry equations such as the Cottrell
 > equation), **not** by copying the book's printed numbers.
 
-![Python 3.14](https://img.shields.io/badge/python-3.14-blue)
-![License: MIT](https://img.shields.io/badge/license-MIT-green)
-
-All 16 chapters and both appendices are complete and self-validating: every
-notebook runs end-to-end and checks itself against a closed-form or
-independently-computed result. Jump in via the
-[table of contents](#table-of-contents).
-
 ## Installation
 
 ```bash
@@ -63,33 +55,13 @@ A clean run means every chapter's validation `assert`s held.
 
 ## What's inside
 
-```
-simulating-electrochemical-reactions-in-python/
-  README.md
-  LICENSE                    # MIT
-  requirements.txt
-  tools/
-    nb_extract.py            # box-format .nb -> readable text (translation aid)
-    build_notebook.py        # builds the Chapter 2 notebook with nbformat
-    _extracted_ExplicitFD.txt   # extracted reference from ExplicitFD.nb
-  serm/
-    __init__.py              # explicit FD solver, electrode current, Cottrell ref
-    tridiagonal.py           # Thomas algorithm + scipy.linalg.solve_banded wrapper
-    filters.py               # MovingAve + Gaussian ConvolutionFilter (port of Filters.m)
-    grids.py                 # FD grid construction (port of makeGrid in ExplicitFD.nb)
-    plotting.py              # matplotlib helpers (profiles, 3-D surface, animation)
-    waveforms.py             # potential excitation waveforms (sweep/step/pulse/AC)
-    echem.py                 # analytic reference results for validation
-    kinetics.py
-    ch05_*.py ch06_*.py ch10_*.py ch12_*.py ch13_*.py ch14_*.py ch15_*.py
-                             # chapter-specific solver modules
-  notebooks/
-    01_solving_pdes.ipynb ... 16_processing_experimental_data.ipynb
-    A_appendix_a_python_refresher.ipynb
-    appendix_b_serm_reference.ipynb        # auto-generated serm API reference
-  validation/
-    validate_explicit.py     # standalone Cottrell-comparison script
-```
+- **`notebooks/`** — the 18 chapter and appendix notebooks; this is the book.
+- **`serm/`** — the shared package the notebooks import: finite-difference
+  solvers (`tridiagonal`, `grids`), potential `waveforms`, `filters`, `plotting`
+  helpers, `kinetics`, and an `echem` library of closed-form references used for
+  validation.
+- **`tools/nb_extract.py`** — converts the original Mathematica `.nb` files to
+  plain text so the source algorithms can be read without Mathematica.
 
 ### Ported Mathematica sources
 
