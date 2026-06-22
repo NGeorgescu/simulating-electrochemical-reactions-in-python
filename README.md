@@ -1,19 +1,34 @@
-# Simulating Electrochemical Reactions in Python
+# Simulating Electrochemical Reactions in ~~Mathematica~~ Python
 
 A Python-native adaptation of Michael Honeychurch's
-**_Simulating Electrochemical Reactions in Mathematica_** (SERM). The original
-Mathematica notebooks are the reference for the science and the numerical
-algorithms; this project re-implements them as idiomatic Python using
-**numpy / scipy / matplotlib** (with **sympy** reserved for genuinely symbolic
-work).
+**_Simulating Electrochemical Reactions in Mathematica_** (SERM). This project
+re-implements the book's electrochemistry and numerical methods as idiomatic
+Python: a complete, runnable course in **digital simulation of electrochemical
+reactions** — diffusion-controlled and kinetically-controlled mass transport,
+**cyclic voltammetry**, chronoamperometry, chronopotentiometry, AC voltammetry,
+adsorbed-species and thin-film responses, and **rotating disk electrode**
+voltammetry — built with the **finite difference method** and related
+**numerical methods** on top of **NumPy**, **SciPy**, and **matplotlib**, with
+**SymPy** reserved for genuinely symbolic work. Every worked example lives in a
+**Jupyter** notebook, and each chapter is checked against the closed-form
+results of **electroanalytical chemistry** (Cottrell, Randles–Sevcik,
+Nicholson–Shain, Sand, Levich, Butler–Volmer kinetics, and a **Monte Carlo**
+random-walk model) so the **electrochemical simulation** code is verified, not
+just plausible.
 
 > **Attribution.** All physics, algorithms, and the structure of the worked
 > examples are due to Michael Honeychurch, *Simulating Electrochemical Reactions
 > in Mathematica*. This repository is an independent Python re-implementation for
-> study; the `.nb`/`.m` source files distributed with the book are the
-> authoritative reference. The Python code here was validated independently
-> against analytical results (e.g. the Cottrell equation) rather than by copying
-> the book's numbers.
+> study; the original Mathematica notebooks distributed with the book are the
+> authoritative reference for the science and the numerical algorithms. The
+> Python code here was **validated independently against published analytic
+> results** (closed-form electrochemistry equations such as the Cottrell
+> equation), **not** by copying the book's printed numbers.
+
+## Badges
+
+![Python 3.14](https://img.shields.io/badge/python-3.14-blue)
+![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
 ## Status
 
@@ -25,33 +40,90 @@ reference (Cottrell, Randles–Sevcik, Nicholson–Shain, Sand, Levich, etc.) th
 pass on execution. See the [table of contents](#table-of-contents-python-native)
 for per-chapter validation methods.
 
-## What's here
+## Installation
+
+This repository was developed against **Python 3.14** with a project-local
+virtual environment (the host's system Python is externally managed / PEP 668).
+The `.venv/` directory is gitignored and fully rebuildable from
+`requirements.txt`.
+
+```bash
+git clone https://github.com/NGeorgescu/simulating-electrochemical-reactions-in-python.git
+cd simulating-electrochemical-reactions-in-python
+
+python3 -m venv .venv
+.venv/bin/pip install -r requirements.txt
+```
+
+Dependencies (see `requirements.txt`): numpy, scipy, matplotlib, sympy,
+nbformat, jupyterlab, nbclient, ipykernel.
+
+## Usage
+
+Open the notebook suite interactively in JupyterLab:
+
+```bash
+.venv/bin/jupyter lab
+```
+
+To register the kernel the notebooks reference (display name
+"Python 3 (serm venv)") for interactive use:
+
+```bash
+.venv/bin/python -m ipykernel install --user --name serm-venv \
+    --display-name "Python 3 (serm venv)"
+```
+
+To sanity-check that the `serm` package imports (run from the project root):
+
+```bash
+.venv/bin/python -c "import serm, serm.tridiagonal, serm.filters, serm.grids, \
+    serm.plotting, serm.waveforms, serm.echem"
+```
+
+To execute every notebook end-to-end (headless). Running them through the
+**venv's** `jupyter` is what binds the notebooks' declared kernel name to this
+interpreter:
+
+```bash
+for nb in notebooks/*.ipynb; do
+  .venv/bin/jupyter nbconvert --to notebook --execute --inplace \
+      --ExecutePreprocessor.timeout=900 "$nb"
+done
+```
+
+A clean run with no `CellExecutionError` means every chapter's `assert`-based
+validation held.
+
+## What's inside
 
 ```
-serm-python/
+simulating-electrochemical-reactions-in-python/
   README.md
+  LICENSE                    # MIT
   requirements.txt
   tools/
-    nb_extract.py        # box-format .nb -> readable text (translation aid)
-    build_notebook.py    # builds the Chapter 2 notebook with nbformat
-    AUTHORING_SPEC.md    # the contract every chapter agent follows
+    nb_extract.py            # box-format .nb -> readable text (translation aid)
+    build_notebook.py        # builds the Chapter 2 notebook with nbformat
+    AUTHORING_SPEC.md        # the contract every chapter agent follows
     _extracted_ExplicitFD.txt   # extracted reference from ExplicitFD.nb
   serm/
-    __init__.py          # explicit FD solver, electrode current, Cottrell ref
-    tridiagonal.py       # Thomas algorithm + scipy.linalg.solve_banded wrapper
-    filters.py           # MovingAve + Gaussian ConvolutionFilter (port of Filters.m)
-    grids.py             # FD grid construction (port of makeGrid in ExplicitFD.nb)
-    plotting.py          # matplotlib helpers (profiles, 3-D surface, animation)
-    waveforms.py         # potential excitation waveforms (sweep/step/pulse/AC)
-    echem.py             # analytic reference results for validation
+    __init__.py              # explicit FD solver, electrode current, Cottrell ref
+    tridiagonal.py           # Thomas algorithm + scipy.linalg.solve_banded wrapper
+    filters.py               # MovingAve + Gaussian ConvolutionFilter (port of Filters.m)
+    grids.py                 # FD grid construction (port of makeGrid in ExplicitFD.nb)
+    plotting.py              # matplotlib helpers (profiles, 3-D surface, animation)
+    waveforms.py             # potential excitation waveforms (sweep/step/pulse/AC)
+    echem.py                 # analytic reference results for validation
+    kinetics.py
     ch05_*.py ch06_*.py ch10_*.py ch12_*.py ch13_*.py ch14_*.py ch15_*.py
-                         # chapter-specific solver modules
+                             # chapter-specific solver modules
   notebooks/
     01_solving_pdes.ipynb ... 16_processing_experimental_data.ipynb
     A_appendix_a_python_refresher.ipynb
     appendix_b_serm_reference.ipynb        # auto-generated serm API reference
   validation/
-    validate_explicit.py # standalone Cottrell-comparison script
+    validate_explicit.py     # standalone Cottrell-comparison script
 ```
 
 The top-level `serm` package re-exports the explicit FD solver plus the
@@ -74,40 +146,6 @@ each notebook (the package is not pip-installed).
   with the same Gaussian kernel `exp(-k^2/100)` over `-len..len`, normalised.
 - `serm/grids.py` and the solver in `serm/__init__.py` — ported from the code
   cells of `Extra Notebooks/chapter2/ExplicitFD.nb`.
-
-## Install and run
-
-This repository was developed against Python 3.14 with a project-local virtual
-environment (the host's system Python is externally managed / PEP 668).
-
-```bash
-cd serm-python
-python -m venv .venv
-.venv/bin/pip install -r requirements.txt
-
-# register the kernel referenced by the notebooks (display name "Python 3 (serm venv)")
-.venv/bin/python -m ipykernel install --user --name serm-venv \
-    --display-name "Python 3 (serm venv)"
-
-# sanity-check the package imports (run from the project root)
-.venv/bin/python -c "import serm, serm.tridiagonal, serm.filters, serm.grids, \
-    serm.plotting, serm.waveforms, serm.echem"
-
-# execute every notebook end-to-end (headless); the kernel name "python3"
-# resolves to this venv because the command is the venv's own jupyter
-for nb in notebooks/*.ipynb; do
-  .venv/bin/jupyter nbconvert --to notebook --execute --inplace \
-      --ExecutePreprocessor.timeout=900 "$nb"
-done
-
-# or open the suite interactively in JupyterLab
-.venv/bin/jupyter lab
-```
-
-The notebooks declare the kernel `python3`; running them through the **venv's**
-`jupyter` (`.venv/bin/jupyter`) is what binds that name to this interpreter. A
-`serm-venv` kernel (display name "Python 3 (serm venv)") is also registered for
-interactive use in JupyterLab.
 
 ## The pilot in brief (Chapter 2)
 
@@ -177,9 +215,17 @@ Mathematica-specific.
   Levich, Koutecký–Levich, surface-wave theory, convergence-order studies, and
   cross-chapter limit checks). Honeychurch's printed numbers are **not** assumed.
 - **How to re-validate everything.** Run the headless execution loop in
-  [Install and run](#install-and-run); a clean run with no `CellExecutionError`
+  [Usage](#usage); a clean run with no `CellExecutionError`
   means every chapter's asserts held. Appendix B re-imports the package and
   re-renders the API reference, so executing it confirms the documented
   signatures and the one-example-per-module smoke tests still pass.
 
 Chapter authors: follow [`tools/AUTHORING_SPEC.md`](tools/AUTHORING_SPEC.md).
+
+## License
+
+Released under the MIT License. See [`LICENSE`](LICENSE). The MIT license applies
+to this independent Python re-implementation only; the original book and its
+Mathematica notebooks remain the work of Michael Honeychurch.
+</content>
+</invoke>
