@@ -63,18 +63,6 @@ A clean run means every chapter's validation `assert`s held.
 - **`tools/nb_extract.py`** — converts the original Mathematica `.nb` files to
   plain text so the source algorithms can be read without Mathematica.
 
-### Ported Mathematica sources
-
-- `serm/tridiagonal.py` — port of `Electrochem/Tridiagonal.m` (Honeychurch,
-  2002). `tridiag_solve` is the bare Thomas algorithm (no pivoting, matching the
-  original `TridiagSolver`); `tridiag_solve_banded` wraps
-  `scipy.linalg.solve_banded` as the recommended, pivoting production path.
-- `serm/filters.py` — port of `Electrochem/Filters.m`. `moving_average`
-  reproduces `MovingAve`; `convolution_filter` reproduces `ConvolutionFilter`
-  with the same Gaussian kernel `exp(-k^2/100)` over `-len..len`, normalised.
-- `serm/grids.py` and the solver in `serm/__init__.py` — ported from the code
-  cells of `Extra Notebooks/chapter2/ExplicitFD.nb`.
-
 ## Table of contents
 
 The book is re-organised into a Python-native sequence: the original Mathematica
