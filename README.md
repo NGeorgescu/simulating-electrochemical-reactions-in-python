@@ -80,13 +80,13 @@ check.
 | 05 | [Potential sweep — reversible CV](notebooks/05_potential_sweep_reversible.ipynb) | peak current vs Randles–Sevcik (< 5e-3) |
 | 06 | [Potential sweep — quasi/non-reversible](notebooks/06_potential_sweep_nonreversible.ipynb) | Cottrell certification + reversible limit vs Nicholson–Shain 0.4463 |
 | 07 | [AC voltammetry](notebooks/07_ac_voltammetry.ipynb) | fundamental-harmonic peak ≈ 1/4 located at E⁰ |
-| 08 | [Potential steps and pulses](notebooks/08_potential_steps_and_pulses.ipynb) | dimensionless & physical Cottrell match (< 1e-2); first-order convergence |
+| 08 | [Potential steps and pulses](notebooks/08_potential_steps_and_pulses.ipynb) | Cottrell `1/√t` *shape* check (amplitude is matched at one time first, so it is self-consistent, not an independent prefactor match) < 1e-2; first-order convergence |
 | 09 | [Chronopotentiometry](notebooks/09_chronopotentiometry.ipynb) | Sand product/constant; wave-shape RMSE bound |
 | 10 | [Thin layers and thin films](notebooks/10_thin_layers_and_films.ipynb) | thin-layer peak height, voltammogram symmetry, absence of diffusional tail |
 | 11 | [Strongly adsorbed molecules](notebooks/11_adsorbed_species.ipynb) | surface-wave peak ψ ≈ 1/4 at E⁰, symmetric |
 | 12 | [Monte Carlo simulations](notebooks/12_monte_carlo.ipynb) | MSD = 2 D t within statistical tolerance; Cottrell t^(−1/2) slope |
-| 13 | [Coupled chemical reactions](notebooks/13_coupled_chemical_reactions.ipynb) | no-reaction limit matches Ch. 5 to machine precision; monotone grid convergence |
-| 14 | [Rotating disk electrode voltammetry](notebooks/14_rotating_disk_electrode.ipynb) | Levich magnitude (< 5e-3) and Levich-plot linearity R² > 0.9999 |
+| 13 | [Coupled chemical reactions](notebooks/13_coupled_chemical_reactions.ipynb) | sim-vs-sim self-consistency: no-reaction limit reproduces the Ch. 5 simulation to machine precision; monotone grid convergence to √λ |
+| 14 | [Rotating disk electrode voltammetry](notebooks/14_rotating_disk_electrode.ipynb) | independent Levich magnitude vs `echem.levich_current` (< 5e-3) and Levich-plot linearity R² > 0.9999; the tight Koutecky–Levich assert is an algebraic identity from the same fit, not an independent check |
 | 15 | [Finite differences with sparse arrays](notebooks/15_sparse_finite_differences.ipynb) | sparse solver matches dense FD to < 1e-11 |
 | 16 | [Processing experimental data](notebooks/16_processing_experimental_data.ipynb) | smoothing reduces RMS; Savitzky–Golay preserves peak position/height |
 | App. A | [Python for electrochemical simulation](notebooks/A_appendix_a_python_refresher.ipynb) | numpy-vs-list equivalence asserts throughout |

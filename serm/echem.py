@@ -31,7 +31,8 @@ def cottrell_current(t, n, A, D, c_bulk):
     .. math::
         i(t) = \\frac{n F A \\sqrt{D}\\, c^*}{\\sqrt{\\pi t}}
 
-    (Bard & Faulkner, 2nd ed., eq. 5.2.11.)  Validates Chapters 2 and 8.
+    (Bard & Faulkner, *Electrochemical Methods*, 2nd ed., potential-step /
+    chronoamperometry chapter.)  Validates Chapters 2 and 8.
 
     Parameters
     ----------
@@ -71,9 +72,10 @@ def randles_sevcik_peak_current(n, A, D, c_bulk, v, temperature=298.15,
         i_p = 0.4463\\, n F A c^* \\sqrt{\\frac{n F v D}{R T}}
 
     At 298.15 K this is the familiar ``i_p = 2.69e5 n^{3/2} A D^{1/2} c^* v^{1/2}``
-    form (Bard & Faulkner, 2nd ed., eq. 6.2.19).  For an irreversible wave the
-    coefficient ``0.4463`` is replaced by ``0.4958`` and ``n`` inside the square
-    root by ``alpha n_a`` (eq. 6.3.8); set ``reversible=False`` for that case.
+    form (Bard & Faulkner, *Electrochemical Methods*, 2nd ed., linear-sweep /
+    cyclic voltammetry chapter).  For an irreversible wave the coefficient
+    ``0.4463`` is replaced by ``0.4958`` and ``n`` inside the square root by
+    ``alpha n_a``; set ``reversible=False`` for that case.
 
     Parameters
     ----------
@@ -112,7 +114,8 @@ def sand_transition_time(n, A, D, c_bulk, i_applied):
         \\tau = \\frac{\\pi D (n F A c^*)^2}{4 i^2}
 
     i.e. ``i \\sqrt{\\tau} = \\tfrac12 n F A c^* \\sqrt{\\pi D}`` (Bard &
-    Faulkner, 2nd ed., eq. 8.2.4).  Validates Chapter 9.
+    Faulkner, *Electrochemical Methods*, 2nd ed., chronopotentiometry chapter).
+    Validates Chapter 9.
 
     Parameters
     ----------
@@ -141,8 +144,8 @@ def levich_current(n, A, D, c_bulk, omega, nu):
     .. math::
         i_L = 0.620\\, n F A D^{2/3} \\nu^{-1/6} \\omega^{1/2} c^*
 
-    (Bard & Faulkner, 2nd ed., eq. 9.3.22; ``omega`` in rad/s.)  Validates
-    Chapter 14.
+    (Bard & Faulkner, *Electrochemical Methods*, 2nd ed., rotating-disk /
+    hydrodynamic-methods chapter; ``omega`` in rad/s.)  Validates Chapter 14.
 
     Parameters
     ----------
@@ -174,8 +177,9 @@ def koutecky_levich_current(i_kinetic, n, A, D, c_bulk, omega, nu):
     .. math::
         \\frac{1}{i} = \\frac{1}{i_k} + \\frac{1}{i_L}
 
-    where ``i_L`` is the Levich current (Bard & Faulkner, 2nd ed., eq. 9.3.39).
-    Returns the measured current ``i`` for a given kinetic current ``i_k``.
+    where ``i_L`` is the Levich current (Bard & Faulkner, *Electrochemical
+    Methods*, 2nd ed., rotating-disk / hydrodynamic-methods chapter).  Returns
+    the measured current ``i`` for a given kinetic current ``i_k``.
 
     Parameters
     ----------
@@ -202,7 +206,8 @@ def surface_wave_peak_current(n, A, gamma, v, temperature=298.15):
     .. math::
         i_p = \\frac{n^2 F^2 A \\Gamma^* v}{4 R T}
 
-    (Bard & Faulkner, 2nd ed., eq. 14.3.11).  The peak is symmetric and grows
+    (Bard & Faulkner, *Electrochemical Methods*, 2nd ed., chapter on
+    adsorbed / surface-confined species).  The peak is symmetric and grows
     *linearly* with sweep rate ``v`` (contrast the ``sqrt(v)`` of a diffusing
     species).  Validates Chapter 11.
 

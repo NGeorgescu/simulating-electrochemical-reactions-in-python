@@ -11,6 +11,9 @@ __pycache__/
 .jupyter/
 *.nbconvert.ipynb
 
+# Generated Mathematica-notebook text dumps (tools/nb_extract.py)
+tools/_extracted_*.txt
+
 # OS / editor
 .DS_Store
 *~

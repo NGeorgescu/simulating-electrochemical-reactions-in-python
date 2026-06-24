@@ -1,8 +1,9 @@
-numpy
-scipy
-matplotlib
-sympy
-nbformat
-jupyterlab
-nbclient
-ipykernel
+# NumPy >= 2.0 is required: serm/ch10 uses np.trapezoid, added in NumPy 2.0.
+numpy>=2.0
+scipy>=1.11
+matplotlib>=3.7
+sympy>=1.12
+nbformat>=5.7
+jupyterlab>=4.0
+nbclient>=0.8
+ipykernel>=6.20

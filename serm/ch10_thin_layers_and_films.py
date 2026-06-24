@@ -37,7 +37,7 @@ from dataclasses import dataclass
 import numpy as np
 
 from .tridiagonal import tridiag_solve_banded
-from .kinetics import bv_surface_factor, bv_surface_conc
+from .kinetics import bv_surface_factor, bv_surface_conc, triangular_sweep_potential
 
 # Chapter 10 uses the source notebook's rounded constants (these set the number
 # of sweep steps via mV_step * f); kept as-is to reproduce ImplicitTLV/TFV.nb.
@@ -83,10 +83,13 @@ def _sweep_setup(temperature, upper, lower, mV_step):
 
 
 def _potential_axis(n, tau, total, upper):
-    """Dimensionless potential nF(E-E0)/RT at each step index k = 1..n."""
-    k = np.arange(1, n + 1)
-    rising = k > (n + 1) / 2
-    return np.where(rising, upper - total + tau * k, upper - tau * k)
+    """Dimensionless potential nF(E-E0)/RT at each step index k = 1..n.
+
+    Delegates to the shared :func:`serm.kinetics.triangular_sweep_potential`
+    used by the other voltammetry chapters, giving a symmetric triangular sweep
+    (ramp down from ``upper`` to the vertex at ``k = (n+1)/2`` and back up).
+    """
+    return triangular_sweep_potential(n, tau, total, upper)
 
 
 def simulate_thin_layer(

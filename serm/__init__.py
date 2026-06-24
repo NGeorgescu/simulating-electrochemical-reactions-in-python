@@ -19,7 +19,7 @@ from . import tridiagonal, filters, grids, plotting, waveforms, echem, kinetics
 __all__ = [
     "explicit_solve",
     "electrode_current",
-    "cottrell_current",
+    "cottrell_dimensionless",
     "make_grid",
     "space_points",
     "dx_dimensionless",
@@ -114,8 +114,13 @@ def electrode_current(c, D_M):
     return i
 
 
-def cottrell_current(n):
+def cottrell_dimensionless(n):
     """Analytical Cottrell dimensionless current ``1/sqrt(pi*tau)``.
+
+    This is the *dimensionless* Cottrell transient on the chapter's ``tau``
+    grid (``tau = (k-1)/(n-1)``), taking the number of time steps ``n`` as its
+    only argument.  It is distinct from :func:`serm.echem.cottrell_current`,
+    which evaluates the dimensional Cottrell current ``i(t)`` in amperes.
 
     Port of ``z = Table[-1/Sqrt[Pi (k-1)/(n-1)], {k, 2, n-1}]`` from
     ``ExplicitFD.nb``.  For a potential step to the diffusion-limited region,
