@@ -14,6 +14,11 @@ __pycache__/
 # Generated Mathematica-notebook text dumps (tools/nb_extract.py)
 tools/_extracted_*.txt
 
+# Non-redistributed experimental data (e.g. ch16 BAS 100B files from the book's CD).
+# Drop local copies under data/chapter16/ to enable the optional real-data sections;
+# they must never be committed (the repo license covers only the Python port).
+data/
+
 # OS / editor
 .DS_Store
 *~
