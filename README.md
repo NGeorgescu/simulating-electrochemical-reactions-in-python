@@ -90,7 +90,62 @@ check.
 | 15 | [Finite differences with sparse arrays](notebooks/15_sparse_finite_differences.ipynb) | sparse solver matches dense FD to < 1e-11 |
 | 16 | [Processing experimental data](notebooks/16_processing_experimental_data.ipynb) | smoothing reduces RMS; Savitzky–Golay preserves peak position/height |
 | App. A | [Python for electrochemical simulation](notebooks/A_appendix_a_python_refresher.ipynb) | numpy-vs-list equivalence asserts throughout |
+| App. A2 | [Semi-integration and fractional calculus](notebooks/A2_semiintegration.ipynb) | semi-integral plateau matches analytic value (< 2%); sigmoid round-trip correlation > 0.999; fractional power-rule identity (< 5e-3) |
 | App. B | [The `serm` package reference (generated)](notebooks/appendix_b_serm_reference.ipynb) | auto-rendered signatures/docstrings + one runnable example per module |
+
+## Additional methods
+
+Beyond the main chapters, [`notebooks/extras/`](notebooks/extras/) collects
+supplementary notebooks that port further algorithms and variants from the book,
+grouped by the chapter they extend. Each validates itself in the same
+assert-backed way and links back to its parent chapter.
+
+**Chapter 1 — Solving PDEs**
+- [Numerical inversion of Laplace transforms (Gaver–Stehfest)](notebooks/extras/01_stehfest_inversion.ipynb)
+
+**Chapter 3 — Speed and accuracy**
+- [Implicit solver on an expanding (non-uniform) grid](notebooks/extras/03_expanding_implicit_grid.ipynb)
+- [Richtmyer higher-order time stepping](notebooks/extras/03_richtmyer.ipynb)
+
+**Chapter 4 — Other numerical methods**
+- [The block (extended) Thomas algorithm](notebooks/extras/04_block_thomas.ipynb)
+- [Volterra equations of the second kind](notebooks/extras/04_volterra_second_kind.ipynb)
+
+**Chapter 5 — Potential sweep, reversible**
+- [Reversible CV by the method of lines](notebooks/extras/05_method_of_lines.ipynb)
+- [Spherical-diffusion correction](notebooks/extras/05_spherical_diffusion.ipynb)
+
+**Chapter 6 — Potential sweep, non-reversible**
+- [Volterra 2nd-kind and FD variants for non-reversible CV](notebooks/extras/06_volterra_nonreversible.ipynb)
+
+**Chapter 7 — AC voltammetry**
+- [Quasi-reversible AC & square-wave voltammetry on an expanding grid](notebooks/extras/07_quasireversible_ac_sw.ipynb)
+
+**Chapter 8 — Potential steps and pulses**
+- [Staircase voltammetry](notebooks/extras/08_staircase_voltammetry.ipynb)
+
+**Chapter 9 — Chronopotentiometry**
+- [Current reversal and successive electron transfers](notebooks/extras/09_chronopot_reversal_and_EE.ipynb)
+
+**Chapter 10 — Thin layers and thin films**
+- [The analytical thin-layer / thin-film response](notebooks/extras/10_analytical_thin_layer.ipynb)
+
+**Chapter 11 — Adsorbed species**
+- [Marcus theory of electron transfer for adsorbed species](notebooks/extras/11_marcus_theory.ipynb)
+
+**Chapter 13 — Coupled chemical reactions**
+- [The square scheme: three ways to handle the cross reaction](notebooks/extras/13_square_scheme.ipynb)
+
+**Chapter 14 — Rotating disk electrode**
+- [The von Kármán rotating-disk velocity profile](notebooks/extras/14_velocity_profile.ipynb)
+
+**Chapter 15 — Sparse finite differences**
+- [FIRM: the Richtmyer / BDF4 sparse time scheme](notebooks/extras/15_firm_sparse.ipynb)
+- [The square scheme on an expanding grid, sparse vs. dense](notebooks/extras/15_square_scheme_sparse.ipynb)
+
+**Appendix A2 — Semi-integration**
+- [Fractional differintegration of arbitrary order](notebooks/extras/A2_fractional_orders.ipynb)
+- [Semi-integral voltammetry: peak → wave](notebooks/extras/A2_semiintegral_lsv.ipynb)
 
 ## License
 

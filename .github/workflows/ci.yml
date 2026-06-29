@@ -10,7 +10,7 @@ jobs:
   execute:
     name: Execute all notebooks
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
 
@@ -26,7 +26,7 @@ jobs:
 
       - name: Execute every notebook (fails on any error or failed assert)
         run: |
-          for nb in notebooks/*.ipynb; do
+          for nb in notebooks/*.ipynb notebooks/extras/*.ipynb; do
             echo "::group::$nb"
             jupyter nbconvert --to notebook --execute --stdout \
               --ExecutePreprocessor.timeout=1200 "$nb" > /dev/null

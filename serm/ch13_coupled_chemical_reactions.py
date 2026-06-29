@@ -50,7 +50,8 @@ import numpy as np
 from scipy.linalg import solve_banded
 
 from .ch05_potential_sweep_reversible import surface_ratio, space_points
-from .kinetics import triangular_sweep_potential
+from .kinetics import triangular_sweep_potential, ks_star_sweep
+from .boundary import bv_dirichlet_surface
 
 
 @dataclass
@@ -329,3 +330,168 @@ def catalytic_plateau_ratio(lam):
         Plateau value of ``sqrt(pi) chi``.
     """
     return np.sqrt(np.asarray(lam, dtype=float))
+
+
+# ---------------------------------------------------------------------------
+# Quasi-reversible EC mechanism (Butler--Volmer surface, uniform grid)
+# ---------------------------------------------------------------------------
+def _solve_block_tridiag_bv(D_M, K, c_old, xi, bulk, ks_star, alpha):
+    """One implicit EC step with a *quasi-reversible* Butler--Volmer surface.
+
+    Identical interior reaction-diffusion blocks to :func:`_solve_block_tridiag`,
+    but the surface node O/R rows implement the discrete Butler--Volmer flux
+    balance instead of the Nernst ratio.  With the one-sided three-point surface
+    gradient (uniform grid) and ``ks_star`` scaled as in
+    :func:`serm.kinetics.ks_star_sweep`, the surface equations are (cf. the
+    expanding-grid surface rows of :mod:`serm.ch15_sparse_finite_differences`
+    in the ``a -> 1`` limit):
+
+      * O:  ``(3 + ks_star xi**-alpha) c_O0 - ks_star xi**(1-alpha) c_R0
+             - 4 c_O1 + c_O2 = 0``  (faradaic flux = BV rate);
+      * R:  zero *net* flux ``3(c_O0+c_R0) - 4(c_O1+c_R1) + (c_O2+c_R2) = 0``;
+      * P (if present): zero flux ``c_P0 - c_P1 = 0``.
+
+    As ``ks_star -> inf`` the O row collapses to the Nernst ratio ``c_O0 = xi c_R0``
+    (divide by ``ks_star``: ``xi**-alpha c_O0 - xi**(1-alpha) c_R0 = 0`` i.e.
+    ``c_O0 = xi c_R0``), recovering :func:`_solve_block_tridiag`.
+
+    Parameters mirror :func:`_solve_block_tridiag`, with the added dimensionless
+    rate constant ``ks_star`` and transfer coefficient ``alpha``.
+    """
+    m, s = c_old.shape
+    N = m * s
+    Amat = (1.0 + 2.0 * D_M) * np.eye(s) + K
+    off = -D_M * np.eye(s)
+
+    bw = 2 * s - 1
+    ab = np.zeros((2 * bw + 1, N))
+    u = bw
+    b = np.zeros(N)
+
+    def put(i, j, val):
+        ab[u + i - j, j] = val
+
+    # --- Surface node 0: Butler-Volmer flux balance. ---
+    # The faradaic flux (two-point gradient c_O1 - c_O0) equals the BV rate
+    #   (c_O1 - c_O0) = -ks_loc (xi^-alpha c_O0 - xi^(1-alpha) c_R0),
+    # i.e.  (1 + ks_loc xi^-alpha) c_O0 - ks_loc xi^(1-alpha) c_R0 - c_O1 = 0.
+    # As ks_loc -> inf this collapses (divide by ks_loc) to the Nernst ratio
+    # c_O0 = xi c_R0 -- the reversible row used by _solve_block_tridiag.
+    put(0, 0, 1.0 + ks_star * xi ** (-alpha))
+    put(0, 1, -ks_star * xi ** (1.0 - alpha))
+    put(0, s + 0, -1.0)
+    b[0] = 0.0
+    # R row: zero *net* faradaic flux (same two-point form as the reversible
+    # solver): (c_O1 - c_O0) + (c_R1 - c_R0) = 0.
+    put(1, 0, -1.0); put(1, 1, -1.0)
+    put(1, s + 0, 1.0); put(1, s + 1, 1.0)
+    b[1] = 0.0
+    # further species P: zero flux  c_P(0) - c_P(1) = 0
+    for ia in range(2, s):
+        put(ia, ia, 1.0)
+        put(ia, s + ia, -1.0)
+        b[ia] = 0.0
+
+    # --- Interior nodes 1 .. m-2: reaction-diffusion. ---
+    for jnode in range(1, m - 1):
+        r = jnode * s
+        for ia in range(s):
+            for ib in range(s):
+                if Amat[ia, ib]:
+                    put(r + ia, r + ib, Amat[ia, ib])
+                put(r + ia, r - s + ib, off[ia, ib])
+                put(r + ia, r + s + ib, off[ia, ib])
+        b[r:r + s] = c_old[jnode]
+
+    # --- Bulk node m-1: Dirichlet. ---
+    r = (m - 1) * s
+    for ia in range(s):
+        put(r + ia, r + ia, 1.0)
+        b[r + ia] = bulk[ia]
+
+    return solve_banded((bw, bw), ab, b).reshape(m, s)
+
+
+def simulate_coupled_cv_quasirev(mechanism, k_dim, ks_dim, *, alpha=0.5,
+                                 n=401, D_M=0.45, upper_limit=8.0,
+                                 lower_limit=8.0, k_back=0.0):
+    """Coupled-reaction CV with a *quasi-reversible* Butler--Volmer electrode.
+
+    Same mechanisms and non-dimensionalisation as :func:`simulate_coupled_cv`,
+    but the electrode kinetics are finite: the surface obeys the Butler--Volmer
+    condition (see :func:`_solve_block_tridiag_bv`) with dimensionless standard
+    rate constant ``ks_star = 2 ks_dim sqrt(T /(D_M (n-1)))``
+    (:func:`serm.kinetics.ks_star_sweep`) and transfer coefficient ``alpha``.
+
+    As ``ks_dim -> inf`` the result must coincide with the reversible
+    :func:`simulate_coupled_cv` (the reduction-to-validated-limit check used in
+    the chapter notebook); as ``ks_dim`` falls the wave broadens and the peaks
+    pull apart, exactly as for the uncoupled quasi-reversible CV of Chapter 6.
+
+    Parameters
+    ----------
+    mechanism : {"E", "EC", "EC'"}
+        As in :func:`simulate_coupled_cv`.
+    k_dim : float
+        Sigma-scaled homogeneous (chemical) rate constant.
+    ks_dim : float
+        Dimensional standard heterogeneous rate constant ``k^o`` (cm/s).
+    alpha : float
+        Transfer coefficient.
+    n, D_M, upper_limit, lower_limit, k_back :
+        As in :func:`simulate_coupled_cv`.
+
+    Returns
+    -------
+    CoupledCVResult
+    """
+    if n % 2 == 0:
+        n += 1
+    T = 2.0 * (upper_limit + abs(lower_limit))
+    tau = T / (n - 1)
+    m = space_points(D_M, n)
+    s = 2 if mechanism in ("E", "EC'") else 3
+
+    kf = k_dim * tau
+    kb = k_back * tau
+    if mechanism == "E":
+        K = np.zeros((s, s))
+    elif mechanism == "EC":
+        K = np.array([[0.0, 0.0, 0.0],
+                      [0.0, kf, -kb],
+                      [0.0, -kf, kb]])
+    elif mechanism == "EC'":
+        K = np.array([[0.0, -kf],
+                      [0.0, kf]])
+    else:
+        raise ValueError("mechanism must be 'E', 'EC', or 'EC''")
+
+    ks_star = ks_star_sweep(ks_dim, T, D_M, n)
+
+    bulk = np.zeros(s)
+    bulk[0] = 1.0
+
+    k_all = np.arange(1, n + 1)
+    frac = surface_ratio(k_all, tau, T, upper_limit)
+    xi = frac / (1.0 - frac)
+
+    c = np.zeros((n, m, s))
+    c[0, :, 0] = 1.0
+    # consistent quasi-reversible surface IC: at the start the surface is close to
+    # equilibrium; seed it with the Nernstian split (negligible for large initial
+    # overpotential, and harmless because the first solved step overwrites it).
+    o0 = bv_dirichlet_surface(xi[0])
+    c[0, 0, 0] = float(o0)
+    c[0, 0, 1] = 1.0 - float(o0)
+
+    for k in range(1, n):
+        c[k] = _solve_block_tridiag_bv(D_M, K, c[k - 1], xi[k], bulk,
+                                       ks_star, alpha)
+
+    cO = c[:, :, 0]
+    grad = 3.0 * cO[:, 0] - 4.0 * cO[:, 1] + cO[:, 2]
+    current = grad * math.sqrt(D_M * (n - 1)) / math.sqrt(4.0 * T)
+    potential = _potential_axis(n, tau, T, upper_limit)
+
+    return CoupledCVResult(c=c, current=current, potential=potential,
+                           n=n, m=m, s=s, D_M=D_M, tau=tau, T=T)

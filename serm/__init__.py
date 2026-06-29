@@ -14,7 +14,10 @@ from __future__ import annotations
 import numpy as np
 
 from .grids import make_grid, space_points, dx_dimensionless
-from . import tridiagonal, filters, grids, plotting, waveforms, echem, kinetics
+from . import (
+    tridiagonal, filters, grids, plotting, waveforms, echem, kinetics,
+    boundary, semiintegration,
+)
 
 __all__ = [
     "explicit_solve",
@@ -30,6 +33,8 @@ __all__ = [
     "waveforms",
     "echem",
     "kinetics",
+    "boundary",
+    "semiintegration",
 ]
 
 
