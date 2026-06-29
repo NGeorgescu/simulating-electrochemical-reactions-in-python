@@ -49,8 +49,12 @@ efficiency ``N`` depends **only** on the geometry ``(r1, r2, r3)`` and is
 independent of ``omega``, bulk concentration, ``n``, ``F`` and ``D_R`` (B&F:
 "depends only on r1, r2, and r3 and is independent of omega, C_O^*, D_O, D_R,
 etc.", p. 351).  The solver scales ``y`` by ``(D_R/B')^{1/3}`` so the coefficient
-becomes unity; the invariance is therefore exact by construction and is
-verified numerically in the companion notebook.
+becomes unity.  Because the solver is fully nondimensionalised, ``omega``,
+``D_R`` and ``C*`` literally never enter its signature, so the invariance is
+exact *by construction* -- it is a structural sanity check that cannot fail,
+not a falsifiable validation.  The real independent cross-check is the geometry
+sweep (closed form vs PDE march across several geometries) in the companion
+notebook.
 
 The Albery--Bruckenstein closed form
 ------------------------------------

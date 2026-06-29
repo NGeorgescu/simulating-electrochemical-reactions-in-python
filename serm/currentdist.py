@@ -355,7 +355,10 @@ def solve_laplace_fd(
     i_int = i_face[r <= a + 1e-12]
     # The edge node value is the singular one; the FD value there is finite but
     # under-resolves the singularity.  Use trapezoid up to the last interior
-    # node and treat the integral as a robust lower-bracket estimate.
+    # node and treat the integral as a robust lower-bracket estimate.  Because
+    # this omits the singular edge contribution, the integral I is biased low,
+    # so R = phi0/I is biased high -- which is WHY R converges from above
+    # (116.1 -> 114.64) as the grid is refined.  The monotonicity is intentional.
     integrand = i_int * 2.0 * np.pi * r_int
     I = np.trapezoid(integrand, r_int)
     R = phi0 / I if I != 0 else np.inf

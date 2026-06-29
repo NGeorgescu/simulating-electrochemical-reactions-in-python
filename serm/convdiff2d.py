@@ -51,9 +51,12 @@ in Bard & Faulkner's variables reproduces **Table 11.6.1** (B&F 2nd ed., p. 444)
     tubular : i = 1.61 nFC (D A / r)^(2/3) v^(1/3)
 
 where ``A`` is the electrode area and ``v`` the volume flow rate.  The dimensionless
-prefactors 1.47 and 1.61 follow from ``C0`` together with the geometric factors
+prefactors follow from ``C0`` together with the geometric factors
 (``s = 6Um/b`` vs ``4Um/r``; flat width ``w`` vs perimeter ``2 pi r``); see
-:func:`channel_prefactor` and :func:`tubular_prefactor`.
+:func:`channel_prefactor` and :func:`tubular_prefactor`.  Note the *analytic*
+Leveque tubular constant is ``2*C0 = 1.6151...``, which rounds to 1.62; B&F
+tabulate the rounded value 1.61, a real ~0.3% offset (the channel constant
+``C0*6^(1/3) = 1.467`` rounds cleanly to 1.47).
 
 Numerical method
 ================
@@ -101,7 +104,9 @@ def tubular_prefactor() -> float:
     """Dimensionless prefactor for a tubular electrode.
 
     Returns the constant multiplying ``nFC (D A / r)^(2/3) v^(1/3)`` in B&F
-    Table 11.6.1; should equal 1.61 to three significant figures.
+    Table 11.6.1.  The analytic value is ``2*C0 = 1.6151...`` (rounds to 1.62);
+    B&F tabulate the rounded 1.61, a ~0.3% difference -- a real offset, not a
+    numerical error.
 
     Derivation: with ``s = 4 Um / r``, perimeter ``2 pi r`` (area
     ``A = 2 pi r L``), volume flow ``v = Um pi r^2``, the Leveque total current
@@ -281,6 +286,12 @@ def solve_channel(prob: ChannelProblem) -> dict:
     # therefore (i) fit K to a clean mid-electrode window and (ii) replace the
     # corrupted head integral [0, x_cut] by its exact analytic value K*(3/2)
     # x_cut^(2/3), integrating the trusted numerical flux over the remainder.
+    #
+    # HONESTY NOTE: the head [0, x_cut] is ~15% of the total integral and uses
+    # the *assumed* Leveque x^(2/3) head SHAPE (its magnitude K is fitted from
+    # the numerical solve, but the shape is imposed analytically).  So the
+    # recovered prefactor (~1.47) is not a fully grid-independent pure-solver
+    # output; ~15% of it rests on the Leveque self-similarity assumption.
     trapz = getattr(np, "trapz", None) or np.trapezoid
 
     # clean window: x in [0.2 L, 0.8 L]
