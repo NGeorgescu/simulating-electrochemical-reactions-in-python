@@ -16,7 +16,7 @@ import numpy as np
 from .grids import make_grid, space_points, dx_dimensionless
 from . import (
     tridiagonal, filters, grids, plotting, waveforms, echem, kinetics,
-    boundary, semiintegration,
+    boundary, semiintegration, convdiff2d, currentdist, rrde,
 )
 
 __all__ = [
@@ -35,6 +35,9 @@ __all__ = [
     "kinetics",
     "boundary",
     "semiintegration",
+    "convdiff2d",
+    "currentdist",
+    "rrde",
 ]
 
 

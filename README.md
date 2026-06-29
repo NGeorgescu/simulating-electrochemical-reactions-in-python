@@ -93,6 +93,20 @@ check.
 | App. A2 | [Semi-integration and fractional calculus](notebooks/A2_semiintegration.ipynb) | semi-integral plateau matches analytic value (< 2%); sigmoid round-trip correlation > 0.999; fractional power-rule identity (< 5e-3) |
 | App. B | [The `serm` package reference (generated)](notebooks/appendix_b_serm_reference.ipynb) | auto-rendered signatures/docstrings + one runnable example per module |
 
+## Beyond Honeychurch
+
+Three new chapters push past Honeychurch's scope into **genuinely two-dimensional
+convective diffusion** and into **current distribution** (an ohmic potential-field
+problem rather than mass transport). Each re-implements the governing equations
+from primary sources, solves them both in closed form and by an independent
+numerical method, and asserts the two agree against a published anchor.
+
+| Chapter | Extends into | Validation anchor |
+|---------|--------------|-------------------|
+| [Channel and tubular electrodes](notebooks/extras/channel_tubular_electrodes.ipynb) | 2-D Lévêque convective diffusion at a wall-mounted band | Limiting-current prefactors 1.47 (channel) / 1.61 (tubular); flow scaling `i ∝ Q^(1/3)` |
+| [Primary current distribution on a disk](notebooks/extras/disk_current_distribution.ipynb) | Laplace potential field / ohmic current distribution (Newman 1966) | Access resistance `R = 1/(4 κ a) = 114.7 Ω` |
+| [RRDE collection efficiency](notebooks/extras/rrde_collection_efficiency.ipynb) | Two-electrode rotating ring–disk convective diffusion (Bard & Faulkner §9.4) | Collection efficiency `N = 0.555` |
+
 ## Additional methods
 
 Beyond the main chapters, [`notebooks/extras/`](notebooks/extras/) collects
