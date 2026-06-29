@@ -48,6 +48,9 @@ from scipy.linalg import solve_banded
 from .kinetics import (
     F, R, f_thermal, ks_star_sweep, bv_surface_factor, bv_surface_conc,
 )
+# Single source of truth for the expanding-grid node count (signature
+# ``(n, a, DM)``), shared with Chapter 7 to avoid a duplicate definition.
+from .ch07_quasireversible_ac_sw import expanding_grid_points
 
 __all__ = [
     "VolterraResult", "volterra_irreversible_cv",
@@ -106,9 +109,11 @@ def volterra_irreversible_cv(
         - h_1\\!\\sum_{i=1}^{m-1} a_i\\bigl[(m-i+1)^{3/2}-(m-i)^{3/2}\\bigr]
         - g_m\\!\\sum_{i=1}^{m-1} a_i\\Bigr),
 
-    with ``h_1 = 0.75 d^{3/2}`` and
+    with ``h_1 = (4/3) d^{3/2}`` and
     ``g_m = d sqrt(pi alpha f v D) e^{-m d} / k_i``, ``k_i = ks e^{-alpha s0}``.
-    The current is the running sum ``chi_m = d sum_{j<=m} a_j``.
+    The current is the running sum ``chi_m = sqrt(pi) d sum_{j<=m} a_j``, which
+    converges to the Nicholson--Shain irreversible peak ``0.4958`` as ``de`` is
+    refined.
 
     Parameters
     ----------
@@ -137,7 +142,8 @@ def volterra_irreversible_cv(
     f = f_thermal(temperature)
     d = alpha * de
     ki = ks * np.exp(-alpha * start_offset)
-    h1 = 0.75 * d ** 1.5
+    # Huber self-weight for the y^{-1/2} kernel on the step of width ``d``.
+    h1 = (4.0 / 3.0) * d ** 1.5
     pref = d * np.sqrt(np.pi * alpha * f * v * D) / ki
 
     a = np.zeros(n + 1)               # 1-indexed slopes
@@ -157,8 +163,9 @@ def volterra_irreversible_cv(
             s2 = float(ai.sum())
         a[m] = (1.0 / (gm + h1)) * (1.0 - h1 * s1 - gm * s2)
 
-    chi = np.cumsum(d * a[1:])
-    p = start_offset - de * np.arange(1, n + 1)
+    # chi already carries the sqrt(pi) of the Nicholson-Shain function.
+    chi = np.sqrt(np.pi) * np.cumsum(d * a[1:])
+    p = start_offset - d * np.arange(1, n + 1)
     return VolterraResult(p=p, chi=chi)
 
 
@@ -271,16 +278,6 @@ def simulate_cv_richtmyer(
     return CVResult(p=p_axis, chi=chi, n_forward=n // 2)
 
 
-def expanding_grid_points(DM: float, a: float, n: int) -> int:
-    """Number of nodes ``m`` for an expanding grid reaching ~6 diffusion lengths.
-
-    Implements the SERM criterion ``sum_{j=1}^{m-1} a^{j-1} = 6 sqrt(DM (1+a)(n-1)/2)``;
-    the geometric sum inverts to a closed form for ``m``.
-    """
-    target = 6.0 * np.sqrt(DM * (1.0 + a) * (n - 1) / 2.0)
-    return int(np.ceil(1.0 + np.log(target * (a - 1.0) + 1.0) / np.log(a)))
-
-
 def simulate_cv_expanding(
     ks_dim: float,
     *,
@@ -318,7 +315,7 @@ def simulate_cv_expanding(
     tau = span / (n - 1)
     ks_star = ks_star_sweep(ks_dim, span, DM, n)
     half = (n + 1) / 2.0
-    m = expanding_grid_points(DM, a, n)
+    m = expanding_grid_points(n, a, DM)
 
     j = np.arange(2, m)                       # j = 2 .. m-1, length m-2
     x = -DM * a ** (4.0 - 2.0 * j)            # sub-diagonal coefficients
