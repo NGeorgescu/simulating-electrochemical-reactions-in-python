@@ -1,0 +1,70 @@
+# Table of contents
+# See https://jupyterbook.org/customize/toc.html
+format: jb-book
+root: intro
+
+parts:
+  - caption: The book — Honeychurch methods
+    chapters:
+      - file: notebooks/01_solving_pdes
+        sections:
+          - file: notebooks/extras/01_stehfest_inversion
+      - file: notebooks/02_explicit_finite_differences
+      - file: notebooks/03_speed_and_accuracy
+        sections:
+          - file: notebooks/extras/03_richtmyer
+          - file: notebooks/extras/03_expanding_implicit_grid
+      - file: notebooks/04_other_numerical_methods
+        sections:
+          - file: notebooks/extras/04_block_thomas
+          - file: notebooks/extras/04_volterra_second_kind
+      - file: notebooks/05_potential_sweep_reversible
+        sections:
+          - file: notebooks/extras/05_method_of_lines
+          - file: notebooks/extras/05_spherical_diffusion
+      - file: notebooks/06_potential_sweep_nonreversible
+        sections:
+          - file: notebooks/extras/06_volterra_nonreversible
+      - file: notebooks/07_ac_voltammetry
+        sections:
+          - file: notebooks/extras/07_quasireversible_ac_sw
+      - file: notebooks/08_potential_steps_and_pulses
+        sections:
+          - file: notebooks/extras/08_staircase_voltammetry
+      - file: notebooks/09_chronopotentiometry
+        sections:
+          - file: notebooks/extras/09_chronopot_reversal_and_EE
+      - file: notebooks/10_thin_layers_and_films
+        sections:
+          - file: notebooks/extras/10_analytical_thin_layer
+      - file: notebooks/11_adsorbed_species
+        sections:
+          - file: notebooks/extras/11_marcus_theory
+      - file: notebooks/12_monte_carlo
+      - file: notebooks/13_coupled_chemical_reactions
+        sections:
+          - file: notebooks/extras/13_square_scheme
+      - file: notebooks/14_rotating_disk_electrode
+        sections:
+          - file: notebooks/extras/14_velocity_profile
+      - file: notebooks/15_sparse_finite_differences
+        sections:
+          - file: notebooks/extras/15_firm_sparse
+          - file: notebooks/extras/15_square_scheme_sparse
+      - file: notebooks/16_processing_experimental_data
+
+  - caption: Appendices
+    chapters:
+      - file: notebooks/A_appendix_a_python_refresher
+      - file: notebooks/A2_semiintegration
+        sections:
+          - file: notebooks/extras/A2_fractional_orders
+          - file: notebooks/extras/A2_semiintegral_lsv
+      - file: notebooks/appendix_b_serm_reference
+
+  - caption: Beyond Honeychurch — 2D convective-diffusion & current distribution
+    chapters:
+      - file: notebooks/extras/channel_tubular_electrodes
+      - file: notebooks/extras/disk_current_distribution
+      - file: notebooks/extras/rrde_collection_efficiency
+      - file: notebooks/extras/tolmachev_unified_convdiff

@@ -1,0 +1,41 @@
+# Jupyter Book configuration
+# See https://jupyterbook.org/customize/config.html
+
+title: Simulating Electrochemical Reactions in Python
+author: >-
+  Nicholas Georgescu — a Python-native adaptation of Michael Honeychurch's
+  "Simulating Electrochemical Reactions in Mathematica"
+logo: ""
+
+# Use the outputs already committed in the notebooks; do NOT re-execute.
+execute:
+  execute_notebooks: "off"
+
+# Markdown / MyST parser extensions
+parse:
+  myst_enable_extensions:
+    - dollarmath
+    - amsmath
+    - colon_fence
+
+# Render math with MathJax (Jupyter Book default HTML math renderer)
+sphinx:
+  config:
+    mathjax3_config:
+      tex:
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+
+# GitHub repository buttons
+repository:
+  url: https://github.com/NGeorgescu/simulating-electrochemical-reactions-in-python
+  path_to_book: ""
+  branch: main
+
+html:
+  use_repository_button: true
+  use_issues_button: true
+  use_edit_page_button: false
+
+# Do NOT enable launch/Binder buttons
+launch_buttons: {}

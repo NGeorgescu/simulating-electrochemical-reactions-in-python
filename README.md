@@ -1,5 +1,7 @@
 # Simulating Electrochemical Reactions in ~~Mathematica~~ Python
 
+📖 Read online: https://NGeorgescu.github.io/simulating-electrochemical-reactions-in-python/
+
 A Python-native adaptation of Michael Honeychurch's
 **_Simulating Electrochemical Reactions in Mathematica_** (SERM). This project
 re-implements the book's electrochemistry and numerical methods as idiomatic

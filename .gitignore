@@ -1,6 +1,9 @@
 # Python virtual environment (rebuild with: python3 -m venv .venv && .venv/bin/pip install -r requirements.txt)
 .venv/
 
+# Jupyter Book build output
+_build/
+
 # Byte-compiled / caches
 __pycache__/
 *.py[cod]

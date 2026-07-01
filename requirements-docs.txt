@@ -1,0 +1,4 @@
+# Dependencies for building the documentation website (Jupyter Book).
+# The site build reuses the notebooks' already-committed outputs
+# (execute_notebooks: off), so the scientific stack is NOT needed here.
+jupyter-book>=1.0,<2.0
