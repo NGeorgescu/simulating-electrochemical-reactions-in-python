@@ -61,8 +61,17 @@ What this module provides
 * :func:`solve_first_order_surface` -- the Abel integral equation for the
   first-order irreversible surface reaction (the user's convolution notebook).
 * :func:`levich_flux_coefficient`, :func:`channel_prefactor`,
-  :func:`tubular_prefactor`, :func:`collection_efficiency` -- the closed-form
-  validation anchors, each *re-derived from the unified formalism*.
+  :func:`tubular_prefactor` -- closed-form limiting-current anchors *derived
+  from the unified formalism* (the Airy ``Ai'(0)/Ai(0)`` flux constant and the
+  Levich :math:`X^{-1/3}` mean-flux integral).  These are then compared against
+  genuinely external anchors (the textbook Levich constant 0.620, the B&F
+  Table 11.6.1 channel/tube values 1.47/1.61).
+* :func:`collection_efficiency` / :func:`F_collection` -- a thin re-export of
+  the Albery--Bruckenstein RRDE closed form already in :mod:`serm.rrde` (B&F
+  eqs. 9.4.16/9.4.17).  This is the *electrochemical* collection efficiency; it
+  is **not** an independent Tolmachev-formalism result (see the docstrings).
+  The paper's own ring quantity is the distinct *spectroscopic* collection
+  efficiency of Table III (its Eqs. 57/61/64), a different physical quantity.
 * :func:`geometry_scales` -- the Table I dimensionless-variable scale factors
   for the four geometries.
 
@@ -213,10 +222,11 @@ def flux_from_surface_conc(surface_conc: NDArray[np.float64], dX: float
     :math:`\theta_Y|_0(X)=-\frac{3^{1/3}}{\Gamma(1/3)}\int_0^X
     (X-x)^{-1/3}\,d\theta(x,0)` (a Stieltjes integral).  For a smooth
     :math:`\theta(X,0)` starting at 0 we integrate by parts to the equivalent
-    :math:`(X-x)^{-2/3}` convolution against :math:`d\theta/dx` -- but the
-    numerically robust route reuses the R3 relation, which is the exact inverse
-    of R4 for the surface pair.  Here we implement R4 directly as the fractional
-    integral of order :math:`2/3` of :math:`d\theta/dx`.
+    :math:`(X-x)^{-2/3}` convolution against :math:`d\theta/dx`.  R3 and R4 are
+    exact inverses of one another for the surface pair (the Beta identity of
+    paper Eq. 46).  Here we implement **R4 directly** as the fractional integral
+    of order :math:`2/3` of :math:`d\theta/dx` (we do *not* reuse the R3 kernel;
+    the R3 relation is implemented separately in :func:`surface_conc_from_flux`).
 
     Under diffusion-limiting conditions (:math:`\theta(X,0)=1` for :math:`X>0`)
     the Stieltjes measure is a step at the origin and this reduces to the
@@ -350,7 +360,8 @@ def solve_first_order_surface(sigma: float, X_max: float = 1.0, n: int = 2001
 
 
 # --------------------------------------------------------------------------- #
-# Closed-form validation anchors, re-derived from the formalism.              #
+# Closed-form limiting-current anchors derived from the formalism.            #
+# (Levich / channel / tube: the Airy flux constant + the X^{-1/3} integral.)  #
 # --------------------------------------------------------------------------- #
 def levich_flux_coefficient() -> float:
     r"""Levich diffusion-limited flux coefficient :math:`3^{1/3}/\Gamma(1/3)`.
@@ -389,10 +400,14 @@ def channel_prefactor() -> float:
     :math:`C_0\,6^{1/3}\,nFc(DA/h)^{2/3}Q^{1/3}`, i.e. prefactor
     :math:`C_0\,6^{1/3}`.
 
+    The genuine external anchor is the **B&F Table 11.6.1** value 1.47; agreement
+    with :func:`serm.convdiff2d.channel_prefactor` is *definitional* (both evaluate
+    the same closed form :math:`C_0\,6^{1/3}`), not an independent cross-check.
+
     Returns
     -------
     float
-        :math:`C_0\,6^{1/3} \approx 1.4666` (B&F Table 11.6.1: 1.47).
+        :math:`C_0\,6^{1/3} \approx 1.4674` (B&F Table 11.6.1: 1.47).
     """
     return LEVEQUE_C0 * 6.0 ** (1.0 / 3.0)
 
@@ -405,6 +420,12 @@ def tubular_prefactor() -> float:
     :math:`Q=\pi v_0 R^2/2`... the :math:`\pi` powers cancel), the average
     Levich flux integrates to :math:`2\,C_0\,nFc(DA/R)^{2/3}Q^{1/3}`.
 
+    The genuine external anchor is the **B&F Table 11.6.1** value 1.61; agreement
+    with :func:`serm.convdiff2d.tubular_prefactor` is *definitional* (same closed
+    form :math:`2C_0`), not an independent cross-check.  Note the analytic
+    constant is :math:`2C_0 = 1.6151`, which rounds to 1.62; B&F tabulate the
+    rounded 1.61 -- a real ~0.3% offset kept honest here.
+
     Returns
     -------
     float
@@ -414,21 +435,26 @@ def tubular_prefactor() -> float:
 
 
 def F_collection(theta: float | NDArray[np.float64]) -> NDArray[np.float64]:
-    r"""Albery-Bruckenstein auxiliary function :math:`F(\theta)`.
-
-    The same :math:`F` appearing in paper Eq. 59 (there written for the RDE
-    surface concentration beyond the electrode edge) and in the RRDE collection
-    efficiency:
+    r"""Albery--Bruckenstein auxiliary function :math:`F(\theta)` (B&F eq. 9.4.17).
 
     .. math::
         F(\theta) = \frac{\sqrt 3}{4\pi}
             \ln\!\frac{(1+\theta^{1/3})^3}{1+\theta}
           + \frac{3}{2\pi}\arctan\frac{2\theta^{1/3}-1}{\sqrt 3} + \frac14 .
 
-    This is structurally the :math:`3/4 + (\sqrt3/4\pi)\ln[\dots] -
-    (3/2\pi)\arctan[\dots]` expression the paper obtains (Eq. 59) by evaluating
-    the R-relation convolution beyond the electrode; it is identical to the
-    Albery-Bruckenstein :math:`F` used for RRDE collection.
+    .. warning::
+        This is byte-for-byte :func:`serm.rrde.F_albery` (B&F eq. 9.4.17); it is
+        re-exposed here only for convenience.  It is **not** an independent
+        re-derivation of that closed form.
+
+    The same functional :math:`F` does appear in the paper's Eq. 59 for the RDE
+    *surface concentration* beyond the electrode edge: one can check numerically
+    that the paper's Eq. 59 surface value equals
+    :math:`1 - F(\rho^3 - 1)` for :math:`\rho > 1`.  That connection is between
+    :math:`F` and the paper's **spectroscopic / surface-concentration** profile,
+    *not* a Tolmachev-formalism derivation of the electrochemical RRDE
+    collection efficiency :math:`N` (which is what
+    :func:`collection_efficiency` returns).
     """
     theta = np.asarray(theta, dtype=float)
     cbrt = np.cbrt(theta)
@@ -440,12 +466,18 @@ def F_collection(theta: float | NDArray[np.float64]) -> NDArray[np.float64]:
 
 
 def collection_efficiency(r1: float, r2: float, r3: float) -> float:
-    r"""RRDE collection efficiency :math:`N` via the analytic (Albery) route.
+    r"""Electrochemical RRDE collection efficiency :math:`N` (B&F eq. 9.4.16).
 
-    The unified formalism gives the rotating-surface concentration beyond the
-    electrode edge through the same :math:`(X-x)^{-2/3}` R-relation convolution
-    that yields Eq. 59; assembling the disk-source / ring-sink contributions
-    reproduces the Albery-Bruckenstein collection efficiency
+    .. warning::
+        This is a **thin re-export** of the Albery--Bruckenstein closed form
+        already implemented in :func:`serm.rrde.collection_efficiency_closed_form`
+        (Bard & Faulkner eq. 9.4.16, 2nd ed. p. 352).  It evaluates the *same*
+        expression via the *same* :func:`F_collection`, so any comparison against
+        :mod:`serm.rrde` is **exact by construction and is NOT an independent
+        check** of the Tolmachev formalism.  It is provided here only so the
+        chapter can display the electrochemical :math:`N` alongside the paper's
+        (distinct) spectroscopic ring quantity.  Do not attribute :math:`N=0.555`
+        to "an independent route from the unified formalism."
 
     .. math::
         N = 1 - F(\alpha/\beta) + \beta^{2/3}[1-F(\alpha)]
