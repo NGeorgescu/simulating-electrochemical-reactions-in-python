@@ -95,17 +95,20 @@ check.
 
 ## Beyond Honeychurch
 
-Three new chapters push past Honeychurch's scope into **genuinely two-dimensional
-convective diffusion** and into **current distribution** (an ohmic potential-field
-problem rather than mass transport). Each re-implements the governing equations
-from primary sources, solves them both in closed form and by an independent
-numerical method, and asserts the two agree against a published anchor.
+These chapters push past Honeychurch's scope into **genuinely two-dimensional
+convective diffusion**, into **current distribution** (an ohmic potential-field
+problem rather than mass transport), and into a **unified formalism** that treats
+several hydrodynamic geometries at once. Each re-implements the governing
+equations from primary sources, solves them both in closed form and by an
+independent numerical method, and asserts the two agree against a published
+anchor.
 
 | Chapter | Extends into | Validation anchor |
 |---------|--------------|-------------------|
 | [Channel and tubular electrodes](notebooks/extras/channel_tubular_electrodes.ipynb) | 2-D Lévêque convective diffusion at a wall-mounted band | Limiting-current prefactors 1.47 (channel) / 1.61 (tubular); flow scaling `i ∝ Q^(1/3)` |
 | [Primary current distribution on a disk](notebooks/extras/disk_current_distribution.ipynb) | Laplace potential field / ohmic current distribution (Newman 1966) | Access resistance `R = 1/(4 κ a) = 114.7 Ω` |
 | [RRDE collection efficiency](notebooks/extras/rrde_collection_efficiency.ipynb) | Two-electrode rotating ring–disk convective diffusion (Bard & Faulkner §9.4) | Collection efficiency `N = 0.555` |
+| [Unified convective-diffusion formalism](notebooks/extras/tolmachev_unified_convdiff.ipynb) | One Laplace/Airy formalism unifying RDE, RRDE, channel and tube (Tolmachev, Wang & Scherson 1996) | Reproduces Levich `0.620`, channel/tube prefactors `1.47`/`1.61`, and `N = 0.555` from a single equation |
 
 ## Additional methods
 
