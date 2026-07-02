@@ -132,9 +132,9 @@ def source_links(*objs, title="Source code (GitHub)"):
         groups[key].append((qualified, url))
 
     parts = [
-        '<div style="border:1px solid #ccc; border-radius:6px; '
+        '<div style="border:1px solid #d0d7de; border-radius:6px; '
         'padding:0.5em 0.75em; margin:0.5em 0; '
-        'font-size:0.9em; background:#f8f8f8;">',
+        'font-size:0.9em; background:#f6f8fa; color:#1f2328;">',
         f'<div style="font-weight:bold; margin-bottom:0.35em;">{title}</div>',
     ]
 
@@ -151,8 +151,11 @@ def source_links(*objs, title="Source code (GitHub)"):
             parts.append('<ul style="margin:0.15em 0; padding-left:1.2em;">')
             for qualified, url in groups[key]:
                 parts.append(
-                    f'<li><code>{qualified}</code> '
-                    f'&rarr; <a href="{url}" target="_blank" '
+                    '<li><code style="color:#24292f; background:#eaeef2; '
+                    'padding:0 3px; border-radius:3px;">'
+                    f'{qualified}</code> '
+                    f'&rarr; <a href="{url}" style="color:#0969da; '
+                    'text-decoration:underline;" target="_blank" '
                     f'rel="noopener noreferrer">source</a></li>'
                 )
             parts.append("</ul>")
