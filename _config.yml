@@ -18,13 +18,11 @@ parse:
     - amsmath
     - colon_fence
 
-# Render math with MathJax (Jupyter Book default HTML math renderer)
-sphinx:
-  config:
-    mathjax3_config:
-      tex:
-        inlineMath: [['$', '$'], ['\\(', '\\)']]
-        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+# Math renders with Jupyter Book's built-in MathJax. dollarmath (above)
+# converts $...$ / $$...$$ in markdown to \(...\) / \[...\] before HTML.
+# No custom mathjax3_config: a hand-written one double-escaped the delimiters
+# through YAML->JSON->JS ('\\(' became the JS string \\( ), so MathJax matched
+# nothing and every equation stayed raw. The default config uses \( \) / \[ \].
 
 # GitHub repository buttons
 repository:
