@@ -1,6 +1,6 @@
 # Simulating Electrochemical Reactions in Python
 
-Welcome. This is a Python-native adaptation of Michael Honeychurch's
+This is a Python-native adaptation of Michael Honeychurch's
 *Simulating Electrochemical Reactions in Mathematica* (SERM): a complete,
 runnable course in the digital simulation of electrochemical reactions, built
 on NumPy, SciPy, matplotlib, and SymPy. Every chapter is a Jupyter notebook,
